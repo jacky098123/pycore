@@ -10,7 +10,7 @@ import types
 import traceback
 
 
-class MySQLOperate:
+class MySQLOperator:
     '''
     database wrapper
     '''
@@ -68,7 +68,7 @@ class MySQLOperate:
             self.__cursor.execute('set CHARACTER_SET_CLIENT=%s;', charset)
             self.__cursor.execute('set CHARACTER_SET_RESULTS=%s;', charset)
         except MySQLdb.Error, e:
-            print "Connect %s %s %s %s %s %s: %s\n" % (host, user, passwd, database, charset, port,
+            print >> sys.stderr, "Connect %s %s %s %s %s %s: %s\n" % (host, user, passwd, database, charset, port,
                                                        str(e))
             ret = False
         if ret:
@@ -83,14 +83,14 @@ class MySQLOperate:
 
     def Query(self, sql, args=None):
         if self.__debug:
-            print 'Debug Query:', sql, args
+            print >> sys.stderr, 'Debug Query:', sql, args
         self.__cursor.execute(sql, args)
         return self.__cursor.fetchall()
 
 
     def QueryDict(self, sql, args=None):
         if self.__debug:
-            print 'Debug QueryDict:', sql, args
+            print >> sys.stderr, 'Debug QueryDict:', sql, args
 
         ret     = []
         self.__cursor.execute(sql, args)
@@ -107,15 +107,15 @@ class MySQLOperate:
 
     def Execute(self, sql, args=None):
         if self.__debug:
-            print 'Debug Execute:', sql,' : ', args
+            print >> sys.stderr, 'Debug Execute:', sql,' : ', args
         affected_count = 0
         try:
             affected_count = self.__cursor.execute(sql, args)
             if self.__autocommit:
                 self.__conn.commit()
         except Exception, e:
-            print 'Execute exception msg:', str(e)
-            print 'Execute exception sql:', sql
+            print >> sys.stderr, 'Execute exception msg:', str(e)
+            print >> sys.stderr, 'Execute exception sql:', sql
             traceback.print_exc()
         return affected_count
 
@@ -216,16 +216,16 @@ class MySQLOperate:
             return self.ExecuteInsertDict(table, data)
 
 
-class MySQLDataDict(MySQLOperate):
+class MySQLDataDict(MySQLOperator):
     '''
     process data dictionary
     '''
     def __init__(self, debug=False):
-        MySQLOperate.__init__(self, debug)
+        MySQLOperator.__init__(self, debug)
 
 
     def __str__(self):
-        return MySQLOperate.__str__(self)
+        return MySQLOperator.__str__(self)
 
 
     def GetDatabase(self, database):
