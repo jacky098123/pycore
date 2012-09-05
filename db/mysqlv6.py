@@ -182,12 +182,15 @@ class MySQLOperator:
             self.__conn = None
 
 
-    def IsRowExists(self, data):
+    def IsRowExists(self, table, dict_data):
         where_set = []
-        for key in data.keys():
-            where_set.append(key + '=%s')
+        for k,v in dict_data.iteritems():
+            if not k or not v:
+                err_str = 'invalid k: %s, v: %s' % (str(k), str(v))
+                raise Exception, err_str
+            where_set.append(k + '=%s')
         sql = "select count(*) from %s where %s" % (table, ' and '.join(where_set))
-        result_set = self.Query(sql, update_para.values())
+        result_set = self.Query(sql, dict_data.values())
         if result_set[0][0] > 0:
             return True
         return False
@@ -210,7 +213,7 @@ class MySQLOperator:
                 if data[i]:
                     update_column[i] = data[i]
 
-        if self.IsRowExists(update_para):
+        if self.IsRowExists(table, update_para):
             return self.ExecuteUpdateDict(table, update_column, update_para)
         else:
             return self.ExecuteInsertDict(table, data)
