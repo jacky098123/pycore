@@ -16,9 +16,11 @@ if CORE_PATH not in sys.path:
 
 from db.mysqlv6 import MySQLOperator, MySQLDataDict
 
+'''
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(levelname)s %(message)s [%(filename)s:%(lineno)d](%(funcName)s)'
                     )
+'''
 
 '''
 firstly this is a project, and it is library for synchronize,
@@ -400,12 +402,12 @@ class TablePair(UtilLog):
 
 
     def DestDelete(self, dry_run_flag=True):
-        logging.info(self.title, 'DestDelete ...')
+        logging.info(self.title + ' DestDelete ...')
         
         (diff_source_data, diff_dest_data, diff_equal_data) = self._Diff() 
 
         if len(diff_dest_data) == 0:
-            logging.info('no result to dest in dest table')
+            logging.info('no result to delete in dest table')
             return
 
         if dry_run_flag:

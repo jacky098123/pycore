@@ -6,7 +6,6 @@ __date__    = '2012-08-11'
 import sys
 import types
 import MySQLdb
-import types
 import traceback
 
 
@@ -107,7 +106,7 @@ class MySQLOperator:
 
     def Execute(self, sql, args=None):
         if self.__debug:
-            print >> sys.stderr, 'Debug Execute:', sql,' : ', args
+            print >> sys.stderr, 'Debug Execute:', sql, ', args:', args
         affected_count = 0
         try:
             affected_count = self.__cursor.execute(sql, args)
@@ -115,7 +114,7 @@ class MySQLOperator:
                 self.__conn.commit()
         except Exception, e:
             print >> sys.stderr, 'Execute exception msg:', str(e)
-            print >> sys.stderr, 'Execute exception sql:', sql
+            print >> sys.stderr, 'Execute exception sql:', sql, ', args:', args
             traceback.print_exc()
         return affected_count
 
@@ -134,6 +133,9 @@ class MySQLOperator:
 
     # data_columns: dict
     def ExecuteInsertDict(self, table, data_columns):
+        if len(data_columns) == 0:
+            return 0
+
         data_columns = self._FormatData(data_columns)
 
         tmp = []
@@ -145,9 +147,12 @@ class MySQLOperator:
 
     # data_columns
     def ExecuteUpdateDict(self, table, data_columns, data_parameters):
+        if len(data_columns) == 0 or len(data_parameters) == 0:
+            return 0
+
         data_columns = self._FormatData(data_columns)
 
-        for k,v in data_parameters:
+        for k,v in data_parameters.iteritems():
             if not v:
                 raise Exception, 'invalid parameter for key: %s' % k
 
@@ -162,7 +167,7 @@ class MySQLOperator:
 
 
     def ExecuteDelete(self, table, data_columns):
-        for k,v in data_columns:
+        for k,v in data_columns.iteritems():
             if not v:
                 raise Exception, 'invalid parameter for key: %s' % k
 
@@ -210,7 +215,7 @@ class MySQLOperator:
             if i in upsert_keys:
                 update_para[i] = data[i]
             else:
-                if data[i]:
+                if type(data[i]) != types.NoneType:
                     update_column[i] = data[i]
 
         if self.IsRowExists(table, update_para):

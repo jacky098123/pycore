@@ -31,7 +31,7 @@ class DatabaseConfig:
                 v = getattr(module, target)
                 if not isinstance(v, dict):
                     continue
-                if not v.has_key('host') or not v.has_key('user') or not v.has_key('password') or not v.has_key('db'):
+                if not v.has_key('host') or not v.has_key('user') or not v.has_key('passwd') or not v.has_key('database'):
                     err_str = 'invalid target: %s, values: %s' % (target, str(v))
                     raise Exception, err_str
                 module_items[target] = v

@@ -15,7 +15,8 @@ logging.basicConfig(level=logging.DEBUG,
 '''
 
 __btlog_init__  = False
-def btlog_init(logfile_name=None, console=False, logfile=True, maxBytes=52428800, verbose=False):
+def btlog_init(logfile_name=None, console=False, logfile=True, maxBytes=52428800, verbose=False,
+               level=logging.DEBUG):
     global __btlog_init__
     if __btlog_init__:
         return
@@ -41,6 +42,9 @@ def btlog_init(logfile_name=None, console=False, logfile=True, maxBytes=52428800
         hdlr1 = logging.StreamHandler()
         hdlr1.setFormatter(formatter)
         root_logger.addHandler(hdlr1)
+
+    root_logger.setLevel(level)
+
 
 def test():
     btlog_init('test.log', logfile=False, console=True, verbose=True)
