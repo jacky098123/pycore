@@ -147,14 +147,19 @@ class MySQLOperator:
 
     # data_columns
     def ExecuteUpdateDict(self, table, data_columns, data_parameters):
-        if len(data_columns) == 0 or len(data_parameters) == 0:
-            return 0
-
         data_columns = self._FormatData(data_columns)
 
         for k,v in data_parameters.iteritems():
             if not v:
                 raise Exception, 'invalid parameter for key: %s' % k
+
+        tmp = []
+        for k in data_columns.keys():
+            if k in data_parameters.keys():
+                data_columns.pop(k)
+
+        if len(data_columns) == 0 or len(data_parameters) == 0:
+            return 0
 
         set_set     = []
         where_set   = []
