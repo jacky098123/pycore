@@ -22,9 +22,6 @@ class HttpClient:
         return self._DoRequest(host, port, 'POST', uri, params, headers)
 
     def _DoRequest(self, host, port, method, uri, params, headers):
-        logging.debug("host: %s, port: %s, method: %s, uri: %s, params: %s, headers: %s" % (
-                host, str(port), method, uri, str(params), str(headers)))
-
         ret = None
         conn = httplib.HTTPConnection(host, int(port))
         try:
@@ -36,6 +33,8 @@ class HttpClient:
             for k,v in headers.iteritems():
                 new_headers[k] = v
 
+            logging.debug("@HttpClient host: %s, port: %s, method: %s, uri: %s, headers: %s, params length: %s" % (
+                    host, str(port), method, uri, str(new_headers), len(params)))
             conn.request(method, uri, params, new_headers)
             resp = conn.getresponse()
             if resp.status == 200:
@@ -47,6 +46,7 @@ class HttpClient:
             logging.error("ERROR: traceback: %s" % traceback.print_exc())
 
         return ret
+
 
 def test_get():
     c = HttpClient()
