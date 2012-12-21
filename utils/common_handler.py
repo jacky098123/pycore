@@ -35,12 +35,12 @@ class CommonHandler:
             result = default
         return result
 
-    def LoadList(self,dataname,sep='\n'):
+    def LoadList(self, dataname, sep='\n'):
         content = self.LoadFile(dataname)
         list = content.split(sep)
         return list
 
-    def LoadFile(self,filename,mode='r'):
+    def LoadFile(self, filename, mode='r'):
         content = ''
         try:
             fp = open(filename,mode)
