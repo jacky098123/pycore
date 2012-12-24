@@ -1,7 +1,7 @@
-#/usr/bin/python
+#!/usr/bin/python
 
 __author__      = 'yangrq@kuxun.com'
-__date__        = '2012-08-30'
+__date__        = '2012-09-26'
 
 '''
 for simple:
@@ -12,56 +12,57 @@ for simple:
 import logging
 import traceback
 import urllib
+import os
+import sys
 import httplib
+import urllib
+import logging
+import traceback
 
 class HttpClient:
-    def __init__(self, host, port=None, secure_flag=False):
-        if secure_flag:
-            if not port:
-                port = 443
-            self.conn = httplib.HTTPSConnection(host, port)
-        else:
-            if not port:
-                port = 80
-            self.conn = httplib.HTTPConnection(host, port)
-#        self.conn.set_debuglevel(5)
+    def __init__(self):
+        pass
 
+    # method may by: GET/DELETE/PURGE for RFC
+    def DoGet(self, host, port=80, uri='/', headers={}, method='GET'):
+        return self._DoRequest(host, port, method, uri, '', headers)
 
-    def DoRequest(self, method, uri, body='', headers=None):
-        logging.info('method: %s, uri: %s, heads: %s, body length: %d' % (
-                method, uri, str(headers), len(body)))
+    def DoPost(self, host, port=80, uri='/', params={}, headers={}):
+        return self._DoRequest(host, port, 'POST', uri, params, headers)
 
-        if not headers:
-            headers = {}
-        if not isinstance(headers, dict):
-            raise Exception, 'http header is not dict'
-        if not headers.has_key("User-Agent"):
-            headers["User-Agent"]   = "Mozilla/5.0 (Windows NT 5.1; rv:14.0) Gecko/20100101 Firefox/14.0.1"
-        if not headers.has_key("Content-type"):
-            headers["Content-type"] = "application/x-www-form-urlencoded"
-        if not headers.has_key("Accept"):
-            headers["Accept"]       = "text/plain"
-
+    def _DoRequest(self, host, port, method, uri, params, headers):
         ret = None
+        conn = httplib.HTTPConnection(host, int(port))
         try:
-            self.conn.request(method, uri, body, headers)
-            resp = self.conn.getresponse()
+            new_headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 5.1; rv:14.0) Gecko/20100101 Firefox/14.0.1",
+                "Content-type": "application/x-www-form-urlencoded",
+                "Accept": "text/plain",
+                }
+            for k,v in headers.iteritems():
+                new_headers[k] = v
+
+            logging.debug("@HttpClient host: %s, port: %s, method: %s, uri: %s, headers: %s, params length: %s" % (
+                    host, str(port), method, uri, str(new_headers), len(params)))
+            conn.request(method, uri, params, new_headers)
+            resp = conn.getresponse()
             if resp.status == 200:
                 logging.info("HTTP 200")
                 ret = resp.read()
+                logging.debug("status 200")
             else:
-                logging.error("ERROR: request %s error: %s", method, resp.reason)
+                logging.error("ERROR: reason: %s" % resp.reason)
         except:
-            logging.error("traceback: %s" % traceback.print_exc())
+            logging.error("ERROR: traceback: %s" % traceback.print_exc())
 
         return ret
 
 
 def test_get():
-    c = HttpClient('www.sohu.com')
-    ret = c.DoRequest('GET', '/')
-    print 'data length: ', len(ret)
-
+    c = HttpClient()
+    data = c.DoGet('www.sohu.com')
+    print 'data length: ', len(data)
+    print data[0:300]
 
 def test_post():
     headers = {"Content-type" : "application/x-www-form-urlencoded"}
@@ -76,5 +77,5 @@ def test_post():
     print ret
 
 if __name__ == '__main__':
-#    test_get()
-    test_post()
+    logging.getLogger().setLevel(logging.DEBUG)
+    test_get()

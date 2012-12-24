@@ -7,6 +7,7 @@ import os
 import sys
 
 class CommonHandler:
+
     def ToUnicode(self, s, encoding='utf8'):
         result = u''
         if s is None:
@@ -43,15 +44,32 @@ class CommonHandler:
     def LoadFile(self, filename, mode='r'):
         content = ''
         try:
-            fp = open(filename,mode)
+            obj = open(filename, mode)
             try:
-                content = fp.read()
+                content = obj.read()
+            except Exception,e:
+                print >> sys.stderr, '#Error: read', filename, str(e) 
             finally:
-                fp.close()
+                obj.close()
         except IOError,e:
-            print >>sys.stderr,'#Error:','open'+filename,str(e)
+            print >>sys.stderr, '#Error: open', filename, str(e)
         return content
 
+
+    def SaveFile(self, filename, content, mode="w"):
+        ret = False
+        try:
+            obj = open(filename, mode)
+            try:
+                obj.write(content)
+                ret = True
+            except Exception,e:
+                print >> sys.stderr, '#Error: write', filename, str(e)
+            finally:
+                obj.close()
+        except IOError, e:
+            print >> sys.stderr, 'Error: open', filename, str(e)
+        return ret
 
 def main():
     ''' main function

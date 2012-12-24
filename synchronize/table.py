@@ -31,9 +31,15 @@ now this becomes a module of library
 class UtilLog:
     def __init__(self):
         current_path    = os.path.dirname(os.path.realpath(__file__))
-        self.data_path  = os.path.join(current_path, 'data')
+        working_path    = os.getcwd()
+        self.data_path  = os.path.join(working_path, 'data')
         if not os.path.exists(self.data_path):
-            os.mkdir(self.data_path)
+            try:
+                os.mkdir(self.data_path)
+            except Exception, e:
+                import traceback
+                logging.error("ERROR: %s" % str(e))
+                logging.error("%s" % traceback.print_exc())
 
 
     def LogDictData(self, file_name, dict_data, prefix=None):
@@ -59,6 +65,17 @@ class UtilLog:
         file_obj.close()
 
 
+    def ToString(self, s, encoding='utf8'):
+        result = ''
+        if s is None:
+            result = ''
+        elif isinstance(s, unicode):
+            result = s.encode(encoding, 'ignore')
+        else:
+            result = str(s)
+        return result
+
+
     def LogListData(self, file_name, list_data, prefix=None):
         file_obj = open(file_name, "a")
 
@@ -66,6 +83,7 @@ class UtilLog:
         if prefix:
             o.write(prefix + '\t')
         for j in list_data:
+            j = self.ToString(j)
             o.write(j)
             o.write('\t')
         o.write('\n')
@@ -158,7 +176,7 @@ class Table(UtilLog):
         return self.connection.QueryDict(sql)
 
     def LogPrimaryKeyData(self, list_data):
-        file_name = self.data_path + '/' + self.table_name + '.data';
+        file_name = self.data_path + '/' + self.title + '.data';
         if os.access(file_name, os.F_OK):
             os.remove(file_name)
 
@@ -339,15 +357,15 @@ class TablePair(UtilLog):
 
         logging.info('%d rows are equal(primary key)' % len(diff_equal_data))
 
-        primary_file_name = self.data_path + '/' + self.source_table.table_name + ".equal.primary"
+        primary_file_name = self.data_path + '/' + self.source_table.title + ".equal.primary"
         if os.access(primary_file_name, os.F_OK):
             os.remove(primary_file_name)
 
-        nocompare_file_name = self.data_path + '/' + self.source_table.table_name + ".equal.nocompare"
+        nocompare_file_name = self.data_path + '/' + self.source_table.title + ".equal.nocompare"
         if os.access(nocompare_file_name, os.F_OK):
             os.remove(nocompare_file_name)
 
-        full_file_name = self.data_path + '/' + self.source_table.table_name + ".equal.full"
+        full_file_name = self.data_path + '/' + self.source_table.title + ".equal.full"
         if os.access(full_file_name, os.F_OK):
             os.remove(full_file_name)
 
@@ -411,10 +429,10 @@ class TablePair(UtilLog):
             return
 
         if dry_run_flag:
-            file_name = self.data_path + '/' + self.dest_table.table_name + ".equal"
+            file_name = self.data_path + '/' + self.dest_table.title + ".equal"
             logging.info('this is dry run, it does no delete anything')
             logging.info('please refer to %s' % file_name)
-            self.LogListData(file_name, self.primary_keys)
+            self.LogListData(file_name, self.source_table.primary_keys)
             for i in range(len(diff_dest_data)):
                 self.LogListData(file_name, diff_dest_data[i].itervalues())
             return
