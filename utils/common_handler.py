@@ -36,11 +36,6 @@ class CommonHandler:
             result = default
         return result
 
-    def LoadList(self, dataname, sep='\n'):
-        content = self.LoadFile(dataname)
-        list = content.split(sep)
-        return list
-
     def LoadFile(self, filename, mode='r'):
         content = ''
         try:
@@ -55,6 +50,10 @@ class CommonHandler:
             print >>sys.stderr, '#Error: open', filename, str(e)
         return content
 
+    def LoadList(self, dataname, sep='\n'):
+        content = self.LoadFile(dataname)
+        list = content.split(sep)
+        return list
 
     def SaveFile(self, filename, content, mode="w"):
         ret = False
@@ -62,6 +61,22 @@ class CommonHandler:
             obj = open(filename, mode)
             try:
                 obj.write(content)
+                ret = True
+            except Exception,e:
+                print >> sys.stderr, '#Error: write', filename, str(e)
+            finally:
+                obj.close()
+        except IOError, e:
+            print >> sys.stderr, 'Error: open', filename, str(e)
+        return ret
+
+    def SaveList(self, filename, content_list, mode="w"):
+        ret = False
+        try:
+            obj = open(filename, mode)
+            try:
+                for line in content_list:
+                    obj.write(line + "\n")
                 ret = True
             except Exception,e:
                 print >> sys.stderr, '#Error: write', filename, str(e)
