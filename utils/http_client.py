@@ -27,10 +27,10 @@ class HttpClient:
     def DoGet(self, host, port=80, uri='/', headers={}, method='GET'):
         return self._DoRequest(host, port, method, uri, '', headers)
 
-    def DoPost(self, host, port=80, uri='/', params={}, headers={}):
-        return self._DoRequest(host, port, 'POST', uri, params, headers)
+    def DoPost(self, host, port=80, uri='/', body=None, headers={}):
+        return self._DoRequest(host, port, 'POST', uri, body, headers)
 
-    def _DoRequest(self, host, port, method, uri, params, headers):
+    def _DoRequest(self, host, port, method, uri, body, headers):
         ret = None
         conn = httplib.HTTPConnection(host, int(port))
         try:
@@ -42,9 +42,9 @@ class HttpClient:
             for k,v in headers.iteritems():
                 new_headers[k] = v
 
-            logging.debug("@HttpClient host: %s, port: %s, method: %s, uri: %s, headers: %s, params length: %s" % (
-                    host, str(port), method, uri, str(new_headers), len(params)))
-            conn.request(method, uri, params, new_headers)
+            logging.debug("@HttpClient host: %s, port: %s, method: %s, uri: %s, headers: %s, body length: %s"
+                          % (host, str(port), method, uri, str(new_headers), len(body)))
+            conn.request(method, uri, body, new_headers)
             resp = conn.getresponse()
             if resp.status == 200:
                 logging.info("HTTP 200")
