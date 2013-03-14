@@ -20,7 +20,8 @@ import logging
 import traceback
 
 class HttpClient:
-    def __init__(self):
+    def __init__(self, debug=False):
+        self._http_debug = debug
         pass
 
     # method may by: GET/DELETE/PURGE for RFC
@@ -33,6 +34,9 @@ class HttpClient:
     def _DoRequest(self, host, port, method, uri, body, headers):
         ret = None
         conn = httplib.HTTPConnection(host, int(port))
+
+        if self._http_debug:
+            conn.set_debuglevel(9)
         try:
             new_headers = {
                 "User-Agent": "Mozilla/5.0 (Windows NT 5.1; rv:14.0) Gecko/20100101 Firefox/14.0.1",
@@ -55,6 +59,7 @@ class HttpClient:
         except:
             logging.error("ERROR: traceback: %s" % traceback.print_exc())
 
+        conn.close()
         return ret
 
 
