@@ -24,7 +24,7 @@ logging.basicConfig(level=logging.DEBUG,
 
 '''
 firstly this is a project, and it is library for synchronize,
-the problem is it is complex for dependency where using this.
+the problem is that it is complex for dependency when using this.
 now this becomes a module of library
 '''
 
@@ -56,6 +56,7 @@ class UtilLog:
         if prefix:
             o.write(prefix + '\t')
         for j in dict_data.itervalues():
+            j = self.ToString(j)
             o.write(j)
             o.write('\t')
         o.write('\n')
