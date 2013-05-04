@@ -28,7 +28,7 @@ the problem is that it is complex for dependency when using this.
 now this becomes a module of library
 '''
 
-class UtilLog:
+class UtilLog(object):
     def __init__(self):
         current_path    = os.path.dirname(os.path.realpath(__file__))
         working_path    = os.getcwd()

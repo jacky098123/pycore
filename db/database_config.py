@@ -7,7 +7,7 @@ import os
 import sys
 import glob
 
-class DatabaseConfig:
+class DatabaseConfig(object):
     def __init__(self):
         self.config_path    = None
         self.db_config      = dict()

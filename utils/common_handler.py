@@ -6,7 +6,7 @@ __date__        = '2012-08-31'
 import os
 import sys
 
-class CommonHandler:
+class CommonHandler(object):
 
     def ToUnicode(self, s, encoding='utf8'):
         result = u''

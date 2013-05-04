@@ -19,7 +19,7 @@ import urllib
 import logging
 import traceback
 
-class HttpClient:
+class HttpClient(object):
     def __init__(self, debug=False):
         self._http_debug = debug
         pass

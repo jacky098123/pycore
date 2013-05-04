@@ -9,7 +9,7 @@ import MySQLdb
 import traceback
 
 
-class MySQLOperator:
+class MySQLOperator(object):
     '''
     database wrapper
     '''
