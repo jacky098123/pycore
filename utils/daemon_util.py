@@ -15,13 +15,12 @@ class DaemonUtil(object):
         if not new_key:
             raise Exception, 'no key specified'
 
-        pid_file = os.path.join(FILE_PATH, '.pid')
         pid_file = "%s/.pid.%s" % (os.getcwd(), new_key)
         return pid_file
 
     def IsRunning(self, key=None):
         pid_file = self.__GetPidFile(key)
-        logging.info("pid_file: %s" % pid_file)
+        logging.info("Daemon: pid_file: %s" % pid_file)
 
         pid_file_flag = True
         try:
@@ -31,18 +30,18 @@ class DaemonUtil(object):
                 file_pid = int(content.strip())
             except Exception, e:
                 pid_file_flag = False
-                logging.warn("Exception: %s, for pid_file: %s" % (str(e), pid_file))
+                logging.warn("Daemon: Exception: %s, for pid_file: %s" % (str(e), pid_file))
             obj.close()
         except Exception, e:
             pid_file_flag = False
-            logging.warn("Exception: %s, for pid_file: %s" % (str(e), pid_file))
+            logging.warn("Daemon: Exception: %s, for pid_file: %s" % (str(e), pid_file))
 
         if pid_file_flag:
             cmd = "ps --no-heading -p %s " % file_pid
-            logging.info("cmd: %s" % cmd)
+            logging.info("Daemon: cmd: %s" % cmd)
             cnt = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0].strip()
             if len(cnt) > 0:
-                logging.info("program is running")
+                logging.info("Daemon: program is running")
                 return True
 
         return False
@@ -56,14 +55,14 @@ class DaemonUtil(object):
             try:
                 obj.write(str(current_pid))
             except Exception, e:
-                logging.warn("Exception: %s, traceback: %s" % (str(e), traceback.print_exc()))
+                logging.warn("Daemon: Exception: %s, traceback: %s" % (str(e), traceback.print_exc()))
                 sys.exit()
             obj.close()
         except Exception, e:
-            logging.warn("Exception: %s, traceback: %s" % (str(e), traceback.print_exc()))
+            logging.warn("Daemon: Exception: %s, traceback: %s" % (str(e), traceback.print_exc()))
             sys.exit()
 
-        logging.info("WritePidFile: new process: %s" % str(current_pid))
+        logging.info("Daemon: WritePidFile: new process: %s" % str(current_pid))
 
     def RemovePidFile(self, key=None):
         pid_file = self.__GetPidFile(key)
