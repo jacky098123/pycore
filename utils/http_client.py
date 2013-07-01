@@ -35,7 +35,7 @@ class HttpClient(object):
         ret = None
         conn = httplib.HTTPConnection(host, int(port))
 
-        if self._http_debug:
+        if hasattr(self, '_http_debug') and self._http_debug:
             conn.set_debuglevel(9)
         try:
             new_headers = {
