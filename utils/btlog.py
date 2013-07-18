@@ -16,11 +16,22 @@ logging.basicConfig(level=logging.DEBUG,
 
 __btlog_init__  = False
 def btlog_init(logfile_name=None, console=False, logfile=True, maxBytes=52428800, verbose=False,
-               level=logging.DEBUG):
+               level=logging.INFO):
     global __btlog_init__
     if __btlog_init__:
         return
     __btlog_init__ = True
+
+    level_mapping   = {
+        'DEBUG'     : logging.DEBUG,
+        'INFO'      : logging.INFO,
+        'WARNING'   : logging.WARNING,
+        'ERROR'     : logging.ERROR,
+        'CRITICAL'  : logging.CRITICAL,
+        'NOTSET'    : logging.NOTSET,
+    }
+
+    level = level_mapping.get(level, level)
 
     if verbose:
         fmt = "%(asctime)s %(levelname)-8s - %(message)s [%(filename)s:%(lineno)d](%(funcName)s)"
@@ -46,15 +57,22 @@ def btlog_init(logfile_name=None, console=False, logfile=True, maxBytes=52428800
     root_logger.setLevel(level)
 
 
-def test():
-    btlog_init('test.log', logfile=False, console=True, verbose=True)
-
+def test_log():
     logging.debug('debug string')
     logging.info('info string')
     logging.warn('warn string')
 
+def test():
+    btlog_init('test.log', logfile=False, console=True, verbose=True)
+    print 'before'
+    test_log()
+    logging.getLogger().setLevel(logging.DEBUG)
+    print 'after'
+    test_log()
+
+def test2():
+    btlog_init('test.log', logfile=False, console=True, verbose=True, level='WARNING')
+    test_log()
 
 if __name__ == '__main__':
-    test()
-    logging.getLogger().setLevel(logging.DEBUG)
-    test()
+    test2()
