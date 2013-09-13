@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.DEBUG,
 
 __btlog_init__  = False
 def btlog_init(logfile_name=None, console=False, logfile=True, maxBytes=52428800, verbose=False,
-               level=logging.INFO, rotating=False):
+               level=logging.INFO, dayrotating=False):
     global __btlog_init__
     if __btlog_init__:
         return
@@ -45,7 +45,7 @@ def btlog_init(logfile_name=None, console=False, logfile=True, maxBytes=52428800
     formatter       = logging.Formatter(fmt)
 
     if logfile:
-        if rotating:
+        if dayrotating:
             from datetime import datetime
             logfile_name = logfile_name + ".%s" % datetime.now().strftime("%Y-%m-%d")
         hdlr = logging.handlers.RotatingFileHandler(logfile_name, maxBytes=maxBytes, backupCount=10)
@@ -74,7 +74,7 @@ def test():
     test_log()
 
 def test2():
-    btlog_init('test.log', logfile=True, console=True, verbose=True, level='WARNING', rotating=True)
+    btlog_init('test.log', logfile=True, console=True, verbose=True, level='WARNING', dayrotating=True)
     test_log()
 
 if __name__ == '__main__':
