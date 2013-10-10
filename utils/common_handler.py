@@ -6,6 +6,14 @@ __date__        = '2012-08-31'
 import os
 import sys
 
+def _tmp_cmp(x,y):
+    if x == y:
+        return 0
+    elif x < y:
+        return -1
+    else:
+        return 1
+
 class CommonHandler(object):
 
     def ToUnicode(self, s, encoding='utf8'):
@@ -86,6 +94,55 @@ class CommonHandler(object):
             print >> sys.stderr, 'Error: open', filename, str(e)
         return ret
 
+
+    # list format: [[],[]]
+    def DiffList(self, list1, list2, compare=_tmp_cmp):
+        idx1 = 0
+        idx2 = 0
+
+        only_exists_in_list1 = []
+        only_exists_in_list2 = []
+        both_exists          = []
+        while idx1 < len(list1) and idx2 < len(list2):
+            if len(list1[idx1]) != len(list2[idx2]):
+                raise Exception, 'length error: %d [%s], %d [%s]' % (idx1, str(list1[idx1]), idx2, str(list2[idx2]))
+            offset = 0
+            offset_len = len(list1[idx1])
+            cmp_ret = 0
+            while offset < offset_len:
+                cmp_ret = compare(list1[idx1][offset], list2[idx2][offset])
+                if cmp_ret != 0:
+                    break
+                offset += 1
+
+            if cmp_ret < 0:
+                only_exists_in_list1.append(list1[idx1])
+                idx1 += 1
+            elif cmp_ret > 0:
+                only_exists_in_list2.append(list2[idx2])
+                idx2 += 1
+            else:
+                both_exists.append(list1[idx1])
+                idx1 += 1
+                idx2 += 1
+#            print cmp_ret, only_exists_in_list1, both_exists, only_exists_in_list2 
+
+        while idx1 < len(list1):
+            only_exists_in_list1.append(list1[idx1])
+            idx1 += 1
+
+        while idx2 < len(list2):
+            only_exists_in_list2.append(list2[idx2])
+            idx2 += 1
+
+        return (only_exists_in_list1, both_exists, only_exists_in_list2)
+
+def test_diff():
+    l1 = [[1], [2], [3], [4], [5], [7]]
+    l2 = [[1], [2], [3], [4], [6], [8]]
+    a = CommonHandler()
+    print a.DiffList(l1, l2)
+
 def main():
     ''' main function
     '''
@@ -93,4 +150,4 @@ def main():
     a.LoadList('/home/aa')
 
 if __name__ == '__main__':
-    main()
+    test_diff()
