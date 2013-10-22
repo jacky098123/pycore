@@ -7,9 +7,8 @@ __date__        = '2012-08-31'
 file format:
     $heaer (one line)
     $content (multi line)
-file encoding: only gbk
-
-load data local infile '' into table biz_landmark(city_id,name,spell,type);
+file encoding:
+    only gbk
 '''
 
 import os
@@ -20,7 +19,7 @@ class FileLoader(object):
         self.head_idx = {}
         
     # return list
-    def GetColumns(self, flag=''):
+    def GetColumns(self):
         raise Exception, 'derive class must implementation'
 
     def _parse_header(self, line):
