@@ -137,11 +137,50 @@ class CommonHandler(object):
 
         return (only_exists_in_list1, both_exists, only_exists_in_list2)
 
+    # list is [1,2,3]
+    def SimpleDiffList(self, list1, list2, compare=_tmp_cmp):
+        idx1 = 0
+        idx2 = 0
+
+        only_exists_in_list1 = []
+        only_exists_in_list2 = []
+        both_exists          = []
+        while idx1 < len(list1) and idx2 < len(list2):
+            cmp_ret = compare(list1[idx1], list2[idx2])
+            if cmp_ret < 0:
+                only_exists_in_list1.append(list1[idx1])
+                idx1 += 1
+            elif cmp_ret > 0:
+                only_exists_in_list2.append(list2[idx2])
+                idx2 += 1
+            else:
+                both_exists.append(list1[idx1])
+                idx1 += 1
+                idx2 += 1
+#            print cmp_ret, only_exists_in_list1, both_exists, only_exists_in_list2 
+
+        while idx1 < len(list1):
+            only_exists_in_list1.append(list1[idx1])
+            idx1 += 1
+
+        while idx2 < len(list2):
+            only_exists_in_list2.append(list2[idx2])
+            idx2 += 1
+
+        return (only_exists_in_list1, both_exists, only_exists_in_list2)
+
+
 def test_diff():
     l1 = [[1], [2], [3], [4], [5], [7]]
     l2 = [[1], [2], [3], [4], [6], [8]]
     a = CommonHandler()
     print a.DiffList(l1, l2)
+
+def simple_diff():
+    l1 = [1,2,3,4,5,7]
+    l2 = [1,2,3,4,6,8]
+    a = CommonHandler()
+    print a.SimpleDiffList(l1, l2)
 
 def main():
     ''' main function
@@ -150,4 +189,4 @@ def main():
     a.LoadList('/home/aa')
 
 if __name__ == '__main__':
-    test_diff()
+    simple_diff()
