@@ -31,6 +31,8 @@ def btlog_init(logfile_name=None, console=False, logfile=True, maxBytes=52428800
         'NOTSET'    : logging.NOTSET,
     }
 
+    if isinstance(level, str):
+        level = level.upper()
     level = level_mapping.get(level, level)
 
     if verbose:
@@ -74,7 +76,7 @@ def test():
     test_log()
 
 def test2():
-    btlog_init('test.log', logfile=True, console=True, verbose=True, level='WARNING', dayrotating=True)
+    btlog_init('test.log', logfile=True, console=True, verbose=True, level='warning', dayrotating=True)
     test_log()
 
 if __name__ == '__main__':
