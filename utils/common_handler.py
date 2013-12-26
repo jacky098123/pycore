@@ -5,6 +5,7 @@ __date__        = '2012-08-31'
 
 import os
 import sys
+import logging
 
 def _tmp_cmp(x,y):
     if x == y:
@@ -94,6 +95,19 @@ class CommonHandler(object):
             print >> sys.stderr, 'Error: open', filename, str(e)
         return ret
 
+    def CrawlUrl(self, url, try_times=1, timeout=10):
+        import urllib2
+        html = ""
+        logging.info(url)
+        for i in range(try_times):
+            try:
+                html = urllib2.urlopen(url, timeout=timeout).read()
+            except Exception, e:
+                logging.warn("CrawlUrl error: %s" % str(e))
+                continue
+            if len(html) > 0:
+                break
+        return html
 
     # list format: [[],[]]
     def DiffList(self, list1, list2, compare=_tmp_cmp):
