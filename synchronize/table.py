@@ -233,6 +233,7 @@ class TablePair(UtilLog):
 
         # get columns
         src_table_field = source_conn.GetAllColumns(self._source_table)
+        src_table_field = [i.encode('utf8', 'ignore') for i in src_table_field]
         if len(src_table_field) == 0:
             self.ExitOnError("src_table_field is zero: %s" % self._source_table)
 
