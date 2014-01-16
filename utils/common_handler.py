@@ -59,10 +59,12 @@ class CommonHandler(object):
             print >>sys.stderr, '#Error: open', filename, str(e)
         return content
 
-    def LoadList(self, dataname, sep='\n'):
+    def LoadList(self, dataname, sep='\n', trim_last_empty_line=True):
         content = self.LoadFile(dataname)
-        list = content.split(sep)
-        return list
+        l = content.split(sep)
+        if trim_last_empty_line and len(l[-1]) == 0:
+            l = l[:-1]
+        return l
 
     def SaveFile(self, filename, content, mode="w"):
         ret = False
@@ -200,7 +202,9 @@ def main():
     ''' main function
     '''
     a = CommonHandler()
-    a.LoadList('/home/aa')
+    l = a.LoadList('/home/yangrq/hadoop.sql')
+    for i in l:
+        print i
 
 if __name__ == '__main__':
-    simple_diff()
+    main()
