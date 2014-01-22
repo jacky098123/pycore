@@ -43,6 +43,8 @@ class CommonHandler(object):
             result = int(item)
         except ValueError, e:
             result = default
+        except Exception, e:
+            result = 0
         return result
 
     def LoadFile(self, filename, mode='r'):
