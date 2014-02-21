@@ -1,4 +1,5 @@
 import os
+import time
 import logging
 import subprocess
 import traceback
@@ -7,13 +8,17 @@ class DaemonUtil(object):
     def __init__(self, key=None):
         self.key = key
 
-    def __GetPidFile(self, key):
+    def __RealKey(self, key=None):
         new_key = key
         if self.key:
             new_key = self.key
 
         if not new_key:
             raise Exception, 'no key specified'
+        return new_key
+
+    def __GetPidFile(self, key):
+        new_key = self.__RealKey(key)
 
         pid_file = "%s/.pid.%s" % (os.getcwd(), new_key)
         return pid_file
@@ -22,12 +27,13 @@ class DaemonUtil(object):
         pid_file = self.__GetPidFile(key)
         logging.info("Daemon: pid_file: %s" % pid_file)
 
-        pid_file_flag = True
+        pid_file_flag   = True
+        pid_items       = []
         try:
             obj = open(pid_file, "r")
             try:
                 content = obj.read()
-                file_pid = int(content.strip())
+                pid_items = content.strip().split("\n")
             except Exception, e:
                 pid_file_flag = False
                 logging.warn("Daemon: Exception: %s, for pid_file: %s" % (str(e), pid_file))
@@ -36,8 +42,8 @@ class DaemonUtil(object):
             pid_file_flag = False
             logging.warn("Daemon: Exception: %s, for pid_file: %s" % (str(e), pid_file))
 
-        if pid_file_flag:
-            cmd = "ps --no-heading -p %s " % file_pid
+        if pid_file_flag and len(pid_items) == 2:
+            cmd = "ps --no-heading -o pid,args -p %s |grep %s" % (pid_items[0], pid_items[1])
             logging.info("Daemon: cmd: %s" % cmd)
             cnt = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0].strip()
             if len(cnt) > 0:
@@ -53,7 +59,7 @@ class DaemonUtil(object):
         try:
             obj = open(pid_file, "w")
             try:
-                obj.write(str(current_pid))
+                obj.write(str(current_pid) + ' ' + self.__RealKey(key))
             except Exception, e:
                 logging.warn("Daemon: Exception: %s, traceback: %s" % (str(e), traceback.print_exc()))
                 sys.exit()
@@ -73,11 +79,9 @@ class DaemonUtil(object):
 if __name__ == '__main__':
     FILE_PATH   = os.path.dirname(os.path.realpath(__file__))
     logging.basicConfig(level=logging.DEBUG,
-                        format='%(asctime)s %(levelname)s %(message)s',
-                        filename="%s/a.log" %
-                        (FILE_PATH),
-                        filemode='a')
+                        format='%(asctime)s %(levelname)s %(message)s')
 
-    t = DaemonUtil('ddd')
+    t = DaemonUtil('util')
     t.IsRunning()
     t.WritePidFile()
+    time.sleep(10)
