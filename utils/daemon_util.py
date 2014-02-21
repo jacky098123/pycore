@@ -43,7 +43,7 @@ class DaemonUtil(object):
             logging.warn("Daemon: Exception: %s, for pid_file: %s" % (str(e), pid_file))
 
         if pid_file_flag and len(pid_items) == 2:
-            cmd = "ps --no-heading -o pid,args -p %s |grep %s" % (pid_items[0], pid_items[1])
+            cmd = "ps --no-heading -o pid,args -p %s |grep \"%s\"" % (pid_items[0], pid_items[1])
             logging.info("Daemon: cmd: %s" % cmd)
             cnt = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0].strip()
             if len(cnt) > 0:
@@ -59,7 +59,7 @@ class DaemonUtil(object):
         try:
             obj = open(pid_file, "w")
             try:
-                obj.write(str(current_pid) + ' ' + self.__RealKey(key))
+                obj.write(str(current_pid) + "\n" + self.__RealKey(key))
             except Exception, e:
                 logging.warn("Daemon: Exception: %s, traceback: %s" % (str(e), traceback.print_exc()))
                 sys.exit()
@@ -82,6 +82,9 @@ if __name__ == '__main__':
                         format='%(asctime)s %(levelname)s %(message)s')
 
     t = DaemonUtil('util')
-    t.IsRunning()
-    t.WritePidFile()
-    time.sleep(10)
+    if not t.IsRunning():
+        t.WritePidFile()
+        logging.info('== main ==')
+        time.sleep(10)
+    else:
+        logging.info("is running")
