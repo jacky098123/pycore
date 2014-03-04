@@ -89,6 +89,7 @@ class CommonHandler(object):
             obj = open(filename, mode)
             try:
                 for line in content_list:
+                    line = self.ToString(line)
                     obj.write(line + "\n")
                 ret = True
             except Exception,e:
