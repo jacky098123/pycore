@@ -31,11 +31,12 @@ class MySQLOperator(object):
 
     def SetAutocommit(self, flag):
         self.__autocommit = flag
+        self.__conn.autocommit(flag)
 
 
     def StartTransaction(self):
         self.__conn.commit()
-        self.__autocommit = False
+        self.SetAutocommit(False)
 
 
     def Commit(self):
