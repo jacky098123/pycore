@@ -132,12 +132,12 @@ class MySQLOperator(object):
         return data
 
 
-    # data_columns: dict
+    # data_columns is dict
     def ExecuteInsertDict(self, table, data_columns):
-        if len(data_columns) == 0:
-            return 0
-
         data_columns = self._FormatData(data_columns)
+
+        if len(data_columns) == 0:
+            raise Exception, 'no data'
 
         tmp = []
         for i in range(len(data_columns)):
@@ -146,7 +146,7 @@ class MySQLOperator(object):
         return self.Execute(sql, data_columns.values())
 
 
-    # data_columns
+    # data_columns is dict, data_parameters is dict
     def ExecuteUpdateDict(self, table, data_columns, data_parameters):
         data_columns = self._FormatData(data_columns)
 
@@ -160,7 +160,7 @@ class MySQLOperator(object):
                 data_columns.pop(k)
 
         if len(data_columns) == 0 or len(data_parameters) == 0:
-            return 0
+            raise Exception, 'invalid data'
 
         set_set     = []
         where_set   = []
@@ -179,7 +179,7 @@ class MySQLOperator(object):
 
         where_set   = []
         for i in data_columns.keys():
-            where_set.append("%s=%%s" % i)
+            where_set.append(i +"=%s")
         sql = "delete from %s where %s" % (table, ' and '.join(where_set))
         return self.Execute(sql, data_columns.values())
 
@@ -207,7 +207,7 @@ class MySQLOperator(object):
         return False
 
 
-    # data is dict, keys is []
+    # data is dict, keys is list
     def Upsert(self, table, data, upsert_keys):
         data = self._FormatData(data)
 
@@ -315,7 +315,7 @@ class MySQLDataDict(MySQLOperator):
 def Test1():
     db = MySQLDataDict()
     if db.Connect("192.168.0.23", "root", "kooxoo", "test", 3306, 'utf8') is False:
-        exit(3)
+        raise Exception, 'can not connect to db'
     query_list = db.GetAllTables()
     print query_list
     query_list = db.GetAllColumns('documents')
