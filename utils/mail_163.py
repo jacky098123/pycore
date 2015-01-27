@@ -16,6 +16,30 @@ msg = ("From: %s\r\nTo: %s\r\n\r\n"
 smtp.sendmail(from, to,msg)
 '''
 
+def render_html(result_set, keys):
+    if len(result_set) == 0:
+        return ""
+
+    html = "<table boarder=1 width='100%'>\n"
+    html += "<tr>"
+    for item in keys:
+        html += "<th style='background-color:yellow'> %s </th>" % item
+    html += "</tr>\n"
+    idx = 0
+    for row in result_set:
+        idx += 1
+        html += "<tr>"
+        for item in keys:
+            if idx % 2 == 0:
+                html += "<td style='background-color:#DEB887'> %s </td> " % str(row.get(item, ''))
+            else:
+                html += "<td style='background-color:#DEC887'> %s </td> " % str(row.get(item, ''))
+        html += "</tr>\n"
+    html += "</table>\n"
+    return html
+
+
+
 FROM_USER   = 'kuxun_mail@163.com'
 FROM_PASSWD = '1234569'
 
