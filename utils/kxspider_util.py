@@ -68,7 +68,7 @@ class KxSpiderUtil:
 
     def _extract_boundary(self, html, former, latter, pos=0, strip_flag=False):
         html = self._to_string(html)
-        logging.debug("html len: %d, former: [%s], latter: [%s], pos: %d, strip_flag: [%s]" % (len(html), former, latter, pos, str(strip_flag)))
+        logging.debug("extract_boundary: html len: %d, former: [%s], latter: [%s], pos: %d, strip_flag: [%s]" % (len(html), former, latter, pos, str(strip_flag)))
         if former is None or len(former) == 0:
             former = ''
             pos = 0
