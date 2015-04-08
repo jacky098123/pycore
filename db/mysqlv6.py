@@ -151,7 +151,7 @@ class MySQLOperator(object):
         data_columns = self._FormatData(data_columns)
 
         for k,v in data_parameters.iteritems():
-            if not v:
+            if v is None:
                 raise Exception, 'invalid parameter for key: %s' % k
 
         tmp = []
@@ -196,7 +196,7 @@ class MySQLOperator(object):
     def IsRowExists(self, table, dict_data):
         where_set = []
         for k,v in dict_data.iteritems():
-            if not k or not v:
+            if k is None or v is None:
                 err_str = 'invalid k: %s, v: %s' % (str(k), str(v))
                 raise Exception, err_str
             where_set.append(k + '=%s')
