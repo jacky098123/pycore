@@ -64,9 +64,9 @@ class MySQLOperator(object):
             self.__conn = MySQLdb.connect(host=host, user=user, passwd=passwd, db=database,
                                           charset=charset, port=port)
             self.__cursor = self.__conn.cursor()
-            self.__cursor.execute('set names %s;', charset)
-            self.__cursor.execute('set CHARACTER_SET_CLIENT=%s;', charset)
-            self.__cursor.execute('set CHARACTER_SET_RESULTS=%s;', charset)
+            self.__cursor.execute('set names %s', [charset,])
+            self.__cursor.execute('set CHARACTER_SET_CLIENT=%s', [charset,])
+            self.__cursor.execute('set CHARACTER_SET_RESULTS=%s', [charset,])
         except MySQLdb.Error, e:
             print >> sys.stderr, "Connect %s %s %s %s %s %s: %s\n" % (host, user, passwd, database, charset, port,
                                                        str(e))
