@@ -33,7 +33,7 @@ class HttpClient(object):
 
     def _DoRequest(self, host, port, method, uri, body, headers):
         ret = None
-        conn = httplib.HTTPConnection(host, int(port))
+        conn = httplib.HTTPConnection(host, int(port), timeout=8)
 
         if hasattr(self, '_http_debug') and self._http_debug:
             conn.set_debuglevel(9)
@@ -68,18 +68,6 @@ def test_get():
     data = c.DoGet('www.sohu.com')
     print 'data length: ', len(data)
     print data[0:300]
-
-def test_post():
-    headers = {"Content-type" : "application/x-www-form-urlencoded"}
-    print headers
-
-    body = "k1=%s&k2=%s" % (urllib.quote_plus("value 1"), urllib.quote_plus("v:%//2"))
-    print body
-
-    c = HttpClient('www.sohu.com')
-    ret = c.DoRequest('POST', '/', body, headers)
-
-    print ret
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.DEBUG)
