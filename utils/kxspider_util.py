@@ -1,5 +1,6 @@
 import re
 import sys 
+import pdb
 import logging
 from urlparse import urlparse
 
@@ -23,6 +24,13 @@ class KxSpiderUtil:
         else:
             result = str(s)
         return result
+
+    def _get_block_text(self, _selector, _path):
+        _lst = _selector.select(_path).extract()
+        full_txt = ' '.join(_lst)
+        txt = self._strip_tags(full_txt)
+        txt = ' '.join(txt.split())
+        return txt.strip()
 
     def _get_selector_single_item(self, _selector, _path):
         _lst = _selector.select(_path).extract()
