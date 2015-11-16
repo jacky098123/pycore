@@ -1,3 +1,4 @@
+# coding: utf8
 import xlrd
 
 '''
@@ -20,7 +21,7 @@ def read_excel_file(filename, column_row_index=0, sheet_index=0):
         colnames =  sheet_table.row_values(column_row_index) #某一行数据
         data_start_index = 1
     else:
-        colnames = ['col%d' for i in range(ncols)]
+        colnames = ['col%d' % i for i in range(ncols)]
         data_start_index = 0
 
     data_list =[]
