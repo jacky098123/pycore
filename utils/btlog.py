@@ -3,6 +3,8 @@
 __author__      = 'yangrq@kuxun.com'
 __date__        = '2012-08-01'
 
+import os
+import sys
 import logging
 import logging.handlers
 
@@ -40,16 +42,18 @@ def btlog_init(logfile_name=None, console=False, logfile=True, maxBytes=52428800
     else:
         fmt = "%(asctime)s %(levelname)-8s - %(message)s"
 
-    if not logfile_name:
-        logfile_name= "btlog.log"
-
     root_logger     = logging.getLogger()
     formatter       = logging.Formatter(fmt)
 
     if logfile:
+        if not logfile_name:
+            logfile_name = 'log.%s.log' % __file__.split('/')[-1].split('.')[0]
+        print logfile_name
+
         if dayrotating:
             from datetime import datetime
             logfile_name = logfile_name + ".%s" % datetime.now().strftime("%Y-%m-%d")
+        print logfile_name
         hdlr = logging.handlers.RotatingFileHandler(logfile_name, maxBytes=maxBytes, backupCount=10)
         hdlr.setFormatter(formatter)
         root_logger.addHandler(hdlr)
@@ -76,7 +80,7 @@ def test():
     test_log()
 
 def test2():
-    btlog_init('test.log', logfile=True, console=True, verbose=True, level='warning', dayrotating=True)
+    btlog_init(logfile=True, console=True, verbose=True, level='warning', dayrotating=True)
     test_log()
 
 if __name__ == '__main__':
