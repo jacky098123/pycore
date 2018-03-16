@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.DEBUG,
 '''
 
 __btlog_init__  = False
-def btlog_init(logfile_name=None, console=False, logfile=True, maxBytes=52428800, verbose=False,
+def btlog_init(logfile_name=None, logfile=True, console=True, maxBytes=200*1024*1024, verbose=False,
                level=logging.INFO, dayrotating=False):
     global __btlog_init__
     if __btlog_init__:
@@ -84,4 +84,4 @@ def test2():
     test_log()
 
 if __name__ == '__main__':
-    test2()
+    test()
